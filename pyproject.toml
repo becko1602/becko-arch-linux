@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "becko-arch-linux"
+version = "1.0.0"
+description = "Becko: a native Arch Linux terminal voice assistant with Gemini Live"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Behruzbek Bekchanov" }]
+dependencies = ["google-genai>=1.0,<3", "sounddevice>=0.5,<1", "textual>=1,<9", "psutil>=6,<8", "platformdirs>=4,<5"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.9"]
+
+[project.scripts]
+becko = "becko_arch.cli:main"
+
+[project.urls]
+Repository = "https://github.com/becko1602/becko-arch-linux"
+Upstream = "https://github.com/becko1602/Becko"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/becko_arch"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+ignore = ["E501", "S101", "S603", "S607"]
