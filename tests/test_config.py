@@ -78,3 +78,22 @@ def test_corrupt_history_is_retained():
     history.add("user", "hello")
     assert history.warning
     assert path.read_text() == "broken JSON"
+
+
+@pytest.mark.parametrize("role", [[], {}, None, 42])
+def test_history_ignores_invalid_roles(role):
+    state_dir().mkdir()
+    path = state_dir() / "history.json"
+    path.write_text(
+        json.dumps(
+            [
+                {"role": role, "text": "invalid"},
+                {"role": "user", "text": "hello"},
+            ]
+        )
+    )
+
+    history = History()
+
+    assert history.turns == [{"role": "user", "text": "hello"}]
+    assert not history.warning

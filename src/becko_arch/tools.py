@@ -90,6 +90,12 @@ DECLARATIONS = [
         ["query"],
     ),
     declaration(
+        "youtube_search",
+        "Search YouTube directly for videos or music. Opens results in the browser; does not play or inspect videos.",
+        {"query": {"type": "STRING"}},
+        ["query"],
+    ),
+    declaration(
         "set_volume",
         "Set the PipeWire/PulseAudio output volume to 0–100 percent.",
         {"percent": {"type": "INTEGER"}},
@@ -189,6 +195,12 @@ class ToolRouter:
             if app not in APPS:
                 raise ToolError("Unsupported app. Choose: " + ", ".join(APPS))
             return await self._launch(*APPS[app])
+        if name == "youtube_search":
+            url = "https://www.youtube.com/results?search_query=" + quote_plus(
+                text_arg(args, "query")
+            )
+            await self._launch("xdg-open", url)
+            return "YouTube search opened: " + args["query"].strip()
         if name in {"open_url", "web_search"}:
             url = (
                 "https://www.google.com/search?q=" + quote_plus(text_arg(args, "query"))

@@ -82,3 +82,12 @@ async def test_subprocess_timeout_kills_child():
 
     with pytest.raises(TimeoutError):
         await run_command(sys.executable, "-c", "import time;time.sleep(30)", timeout=0.05)
+
+
+async def test_youtube_search_encodes_query_and_launches_once(router):
+    router._launch = AsyncMock(return_value="launched")
+    result = await router.execute("youtube_search", {"query": "O'zbek music & English"})
+    assert "error" not in result
+    router._launch.assert_awaited_once_with(
+        "xdg-open", "https://www.youtube.com/results?search_query=O%27zbek+music+%26+English"
+    )

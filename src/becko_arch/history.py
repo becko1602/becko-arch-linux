@@ -22,7 +22,7 @@ class History:
                         item
                         for item in raw[-100:]
                         if isinstance(item, dict)
-                        and item.get("role") in {"user", "model"}
+                        and item.get("role") in ("user", "model")
                         and isinstance(item.get("text"), str)
                     ]
                 except (OSError, ValueError):

@@ -33,11 +33,26 @@ becko doctor
 becko
 ```
 
-Get your own key from https://aistudio.google.com/apikey. `becko setup` uses a hidden prompt; it never accepts a key as a shell argument. You can also press **F3** inside Becko and paste the key into the password field. Without a key the UI and local commands work, and AI requests show a clear setup message.
+Get your own key from https://aistudio.google.com/apikey. `becko setup` uses a hidden prompt; it never accepts a key as a shell argument. You can also press **F3** inside Becko and paste the key into the password field. Without a key the UI, local commands and explicit typed YouTube shortcuts work; other AI requests show a setup message.
 
 Environment variables take priority over the saved key: `BECKO_GEMINI_API_KEY`, then `GEMINI_API_KEY`, then `GOOGLE_API_KEY`. Set them securely in your environment; do not paste actual credentials into commands saved in shell history or commit them.
 
 The default model identifiers are `gemini-3.8-live` and `gemini-3.8-flash`, following the Google model documentation checked during development. Model availability, region access and quotas depend on your Google account. Change models at any time in F3 Settings or with `becko config --live-model MODEL --text-model MODEL`. Quota/authentication/model errors are shown honestly; no AI answers or grades are fabricated.
+
+## Uzbek / English voice and quick tasks
+
+Run `becko setup` once to save your own Gemini API key, then run `becko`.
+Voice connects automatically; F4 mutes and F2 disconnects. `becko --text` starts without voice.
+The assistant follows the language you speak, including Uzbek and English. You can set a preference with `becko config --language Uzbek` (or `English` / `auto`).
+
+Try saying:
+
+- “YouTubega kir, o‘zbek qo‘shiqlari deb qidir.”
+- “Search YouTube for Arch Linux tutorials.”
+- “Firefoxni och.” / “Open Firefox.”
+- “Ovozni 40 foiz qil.” / “Set volume to 40 percent.”
+
+YouTube search opens the actual results page directly in one tool call. It does not automatically select or play a video. Explicit typed YouTube requests also work without an API key, skipping the cloud round trip. Voice and general AI requests require internet and Gemini access; response time depends on the network and service.
 
 ## Controls
 
@@ -51,7 +66,7 @@ The default model identifiers are `gemini-3.8-live` and `gemini-3.8-flash`, foll
 | F6 | Confirm sharing one screenshot with Gemini |
 | Ctrl+Q | Disconnect audio, cancel session reminders and exit |
 
-The microphone is **off on launch** and is opened only when you connect voice. During a live session microphone PCM is sent to Gemini. Disconnect releases the audio streams. Audio is never saved to disk. Echo gating pauses mic input during speaker playback; headphones improve conversation quality. A continuous live session has model-specific duration limits; reconnect using F2 after an expiry or network failure.
+Running `becko` automatically connects live voice and opens the microphone when an API key is configured. Use `becko --text` to launch with the microphone off. Without a key, the microphone stays off; configure it with `becko setup` or F3. During a live session microphone PCM is sent to Gemini. Disconnect releases the audio streams. Audio is never saved to disk. Echo gating pauses mic input during speaker playback; headphones improve conversation quality. A continuous live session has model-specific duration limits; reconnect using F2 after an expiry or network failure.
 
 Recommended terminal size: 80×24 or larger. The sidebar is hidden in narrow terminals. Every action is available by keyboard; confirmation dialogs focus Cancel by default.
 

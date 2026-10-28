@@ -173,9 +173,10 @@ class BeckoApp(App[None]):
         ("ctrl+q", "quit", "Quit"),
     ]
 
-    def __init__(self, settings: Settings | None = None):
+    def __init__(self, settings: Settings | None = None, *, auto_voice: bool = False):
         super().__init__()
         self.settings = settings or Settings.load()
+        self.auto_voice = auto_voice
         self.history = History(self.settings.save_history)
         self.router = ToolRouter(self.confirm, self.reminder)
         self.live: LiveAssistant | None = None
@@ -234,7 +235,7 @@ class BeckoApp(App[None]):
     def on_mount(self) -> None:
         self.say(
             "Becko",
-            "Salom! Men Becko — Arch Linux yordamchingizman. F2 bilan ovozli suhbatni boshlang yoki yozing.",
+            "Salom! Men Becko. O‘zbekcha yoki inglizcha gapiring. F2 — ovoz, F4 — mikrofon. Yozma buyruqlar ham ishlaydi.",
         )
         if not self.settings.effective_key:
             self.say(
@@ -248,6 +249,8 @@ class BeckoApp(App[None]):
         self.query_one("#prompt", Input).focus()
         self.set_interval(3, self.refresh_system)
         self.refresh_system()
+        if self.auto_voice and self.settings.effective_key:
+            self.call_after_refresh(self.action_voice)
 
     def on_resize(self, event) -> None:
         for sidebar in self.query("#sidebar"):
@@ -429,6 +432,8 @@ class BeckoApp(App[None]):
                     "Settings",
                     "Saved. Reconnect live voice to apply changes. API key is never printed.",
                 )
+                if self.auto_voice and settings.effective_key and self.live is None:
+                    self.call_after_refresh(self.action_voice)
 
         self.push_screen(SettingsScreen(self.settings), saved)
 

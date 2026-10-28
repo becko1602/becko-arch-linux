@@ -24,6 +24,9 @@ def build_parser() -> argparse.ArgumentParser:
         prog="becko", description="Becko — native Arch Linux voice and desktop assistant"
     )
     parser.add_argument("--version", action="version", version=f"Becko Arch Linux {__version__}")
+    parser.add_argument(
+        "--text", action="store_true", help="Open without automatically connecting the microphone"
+    )
     sub = parser.add_subparsers(dest="command")
     sub.add_parser("setup", help="Save your API key securely using a hidden prompt")
     doctor = sub.add_parser(
@@ -39,6 +42,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     config.add_argument("--text-model")
     config.add_argument("--live-model")
+    config.add_argument("--language", help="Language preference, e.g. auto, Uzbek or English")
     config.add_argument("--voice", choices=list(VOICES))
     config.add_argument("--input-device", type=int)
     config.add_argument("--output-device", type=int)
@@ -119,7 +123,14 @@ def main() -> None:
                 console.print(f"{name:16} {description}", markup=False)
         elif args.command == "config":
             changed = False
-            for field in ("text_model", "live_model", "voice", "input_device", "output_device"):
+            for field in (
+                "text_model",
+                "live_model",
+                "voice",
+                "language",
+                "input_device",
+                "output_device",
+            ):
                 if getattr(args, field) is not None:
                     setattr(settings, field, getattr(args, field))
                     changed = True
@@ -141,7 +152,7 @@ def main() -> None:
                 )
             from .ui import BeckoApp
 
-            BeckoApp(settings).run()
+            BeckoApp(settings, auto_voice=not args.text).run()
     except KeyboardInterrupt:
         return
     except Exception as exc:
